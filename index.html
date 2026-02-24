@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absensi Siswa</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; width: 90%; max-width: 400px; }
+        h1 { color: #333; font-size: 24px; margin-bottom: 10px; }
+        .info { margin: 20px 0; color: #666; }
+        #status { font-weight: bold; margin: 15px 0; padding: 10px; border-radius: 5px; }
+        .lokasi-ok { color: #27ae60; background: #e8f6ed; }
+        .lokasi-error { color: #e74c3c; background: #fdeaea; }
+        .btn-hadir { background-color: #3498db; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 50px; cursor: pointer; transition: 0.3s; width: 100%; }
+        .btn-hadir:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        .btn-hadir:hover:not(:disabled) { background-color: #2980b9; transform: scale(1.02); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Beranda Absensi</h1>
+    <div class="info">
+        <strong id="namaSiswa">Budi Setiawan</strong><br>
+        <span id="hariTanggal"></span>
+    </div>
+
+    <div id="status">Mengecek Lokasi...</div>
+
+    <button id="btnHadir" class="btn-hadir" disabled onclick="kirimHadir()">HADIR</button>
+</div>
+
+<script>
+    // 1. Tampilkan Hari & Tanggal
+    const opsi = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('hariTanggal').innerText = new Date().toLocaleDateString('id-ID', opsi);
+
+    // 2. LOGIKA LOKASI (GANTI KOORDINAT INI)
+    const SEKOLAH_LAT = -6.175392; // Contoh: Koordinat Monas
+    const SEKOLAH_LNG = 106.827153; 
+    const RADIUS_MAKSIMAL = 100; // Dalam Meter
+
+    function hitungJarak(lat1, lon1, lat2, lon2) {
+        const R = 6371e3; // Radius bumi dalam meter
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    }
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+            const jarak = hitungJarak(pos.coords.latitude, pos.coords.longitude, SEKOLAH_LAT, SEKOLAH_LNG);
+            const statusDiv = document.getElementById('status');
+            const btn = document.getElementById('btnHadir');
+
+            if (jarak <= RADIUS_MAKSIMAL) {
+                statusDiv.innerText = "✅ Anda berada di area sekolah";
+                statusDiv.className = "lokasi-ok";
+                btn.disabled = false;
+            } else {
+                statusDiv.innerText = "❌ Anda di luar area sekolah (" + Math.round(jarak) + "m)";
+                statusDiv.className = "lokasi-error";
+            }
+        }, () => {
+            document.getElementById('status').innerText = "Mohon aktifkan GPS Anda";
+        });
+    }
+
+    function kirimHadir() {
+        alert("Absensi Berhasil Terkirim!");
+    }
+</script>
+
+</body>
+</html>
