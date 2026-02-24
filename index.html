@@ -77,16 +77,37 @@
         }, { enableHighAccuracy: true });
     }
 
-    function kirimHadir() {
-        const nama = document.getElementById('namaSiswa').value;
-        if (nama.trim() === "") {
-            alert("Peringatan: Isi nama Anda terlebih dahulu!");
-        } else {
-            alert("Berhasil! Terima kasih " + nama + ". Kehadiran Anda hari ini sudah tercatat.");
-            // Di sini nanti bisa kita hubungkan ke Google Sheets
-        }
-    }
-</script>
+   function kirimHadir() {
+    const nama = document.getElementById('namaSiswa').value;
+    // Ini adalah link Google Script Anda
+    const url_sheet = "https://script.google.com/macros/s/AKfycbwz8PTrqlM77QZdBzlZTQQaGBdsbSLNKkrF1_4E3Ir5R1SXjnWJ-KLkqkJ78tCBb7PYiQ/exec";
 
+    if (nama.trim() === "") {
+        alert("Peringatan: Isi nama Anda terlebih dahulu!");
+    } else {
+        // Tombol berubah saat proses kirim agar tidak diklik dua kali
+        const btn = document.getElementById('btnHadir');
+        btn.disabled = true;
+        btn.innerText = "MENGIRIM...";
+
+        // Proses mengirim data ke Google Sheets
+        fetch(url_sheet, {
+            method: "POST",
+            mode: "no-cors", // Penting agar tidak error di browser
+            body: JSON.stringify({ "nama": nama })
+        })
+        .then(() => {
+            alert("Berhasil! Terima kasih " + nama + ". Kehadiran Anda sudah tercatat di Excel Guru.");
+            document.getElementById('namaSiswa').value = ""; // Kosongkan nama
+            btn.innerText = "KLIK UNTUK HADIR";
+            btn.disabled = false;
+        })
+        .catch(err => {
+            alert("Gagal mengirim data, pastikan internet stabil.");
+            btn.disabled = false;
+            btn.innerText = "KLIK UNTUK HADIR";
+        });
+    }
+}
 </body>
 </html>
