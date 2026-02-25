@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 
 <html>
 <head>
@@ -21,14 +21,16 @@ button:disabled { background: #ccc; cursor: not-allowed; }
 <div class="card">
 <h2>Daftar Hadir Siswa</h2>
 <p style="color:#666; margin-top:-10px;">SMP Negeri 3 Sindang</p>
-
+<input type="text" id="nama" placeholder="Ketik Nama Lengkap...">
+<div id="status">⌛ Menunggu Lokasi...</div>
+<button id="btn" disabled onclick="kirim()">KLIK UNTUK HADIR</button>
 </div>
 
 <script>
-// Koordinat yang Bapak dapatkan tadi
+// Koordinat yang Bapak dapatkan di lokasi
 const SEK_LAT = -6.328985;
 const SEK_LNG = 108.321355;
-const RAD = 500; // Radius 500 meter agar PASTI bisa klik
+const RAD = 500; // Radius 500 meter agar stabil
 
 </script>
 
