@@ -2,33 +2,94 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Absen Online Kelas 8D</title>
+  <title>Absen Kehadiran SMP Negeri 3 Sindang</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 40px; }
-    .container { max-width: 400px; margin: auto; }
-    input, button { width: 100%; padding: 10px; margin: 10px 0; }
-    button { background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-    button:disabled { background-color: #ccc; cursor: not-allowed; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1E90FF; /* biru */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .absen-box {
+      background-color: #1E90FF;
+      border: 4px solid white;
+      border-radius: 10px;
+      padding: 30px;
+      text-align: center;
+      width: 350px;
+      color: white;
+    }
+    .absen-box h2 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .absen-box h3 {
+      margin: 5px 0 20px 0;
+      font-size: 18px;
+    }
+    .logo {
+      width: 100px;
+      height: 100px;
+      margin: 10px auto;
+    }
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 15px 0;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+    button {
+      width: 95%;
+      padding: 12px;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button.enabled {
+      background-color: white;
+      color: #1E90FF;
+    }
+    button.disabled {
+      background-color: #ccc;
+      color: #666;
+      cursor: not-allowed;
+    }
+    #status {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+    #status.red {
+      color: red;
+    }
+    #status.white {
+      color: white;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Absen Online Siswa Kelas 8D</h2>
-    <p>Silakan masukkan nama Anda lalu klik "Hadir".</p>
+  <div class="absen-box">
+    <h2>ABSEN KEHADIRAN</h2>
+    <h3>SMP Negeri 3 Sindang</h3>
+    <img src="logo-smpn3.png" alt="Logo SMP Negeri 3 Sindang" class="logo">
     <input type="text" id="nama" placeholder="Nama lengkap">
-    <button id="btnHadir" onclick="absen()" disabled>Hadir</button>
-    <p id="status"></p>
+    <button id="btnHadir" class="disabled" onclick="absen()" disabled>Hadir</button>
+    <p id="status" class="red">Anda berada diluar Jangkauan</p>
   </div>
 
   <script>
-    // Koordinat sekolah
     const sekolahLat = -6.328985;
     const sekolahLng = 108.321355;
-    const maxDistance = 0.1; // dalam km (100 meter)
+    const maxDistance = 0.1; // km (100 meter)
 
-    // Hitung jarak dengan rumus haversine
     function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-      const R = 6371; // radius bumi km
+      const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
       const dLon = (lon2 - lon1) * Math.PI / 180;
       const a =
@@ -39,22 +100,29 @@
       return R * c;
     }
 
-    // Cek lokasi siswa
     navigator.geolocation.getCurrentPosition(function(pos) {
       const lat = pos.coords.latitude;
       const lng = pos.coords.longitude;
       const jarak = getDistanceFromLatLonInKm(lat, lng, sekolahLat, sekolahLng);
+
       if (jarak <= maxDistance) {
-        document.getElementById("status").innerText = "Lokasi valid, Anda bisa absen.";
-        document.getElementById("btnHadir").disabled = false;
+        document.getElementById("status").innerText = "Absen Online";
+        document.getElementById("status").className = "white";
+        const btn = document.getElementById("btnHadir");
+        btn.disabled = false;
+        btn.className = "enabled";
       } else {
-        document.getElementById("status").innerText = "Lokasi terlalu jauh dari sekolah. Tidak bisa absen.";
+        document.getElementById("status").innerText = "Anda berada diluar Jangkauan";
+        document.getElementById("status").className = "red";
+        const btn = document.getElementById("btnHadir");
+        btn.disabled = true;
+        btn.className = "disabled";
       }
     }, function(err) {
       document.getElementById("status").innerText = "Gagal mendapatkan lokasi: " + err.message;
+      document.getElementById("status").className = "red";
     });
 
-    // Kirim data ke Google Apps Script
     function absen() {
       const nama = document.getElementById("nama").value;
       if (!nama) {
@@ -62,7 +130,6 @@
         return;
       }
 
-      // Ganti URL di bawah dengan URL Web Apps Script Anda
       const scriptURL = "https://script.google.com/macros/s/AKfycbxYourScriptID/exec";
 
       fetch(scriptURL, {
@@ -71,9 +138,11 @@
       })
       .then(response => {
         document.getElementById("status").innerText = "Absen berhasil dikirim.";
+        document.getElementById("status").className = "white";
       })
       .catch(error => {
         document.getElementById("status").innerText = "Terjadi kesalahan: " + error;
+        document.getElementById("status").className = "red";
       });
     }
   </script>
