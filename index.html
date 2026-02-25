@@ -41,6 +41,7 @@
       border-radius: 50%;
       border: 3px solid white;
       object-fit: cover;
+      display: block;
     }
     input {
       width: 90%;
@@ -87,12 +88,16 @@
   </style>
 </head>
 <body>
+
   <div class="absen-box">
     <h2>ABSEN KEHADIRAN</h2>
     <h3>SMP Negeri 3 Sindang</h3>
-   <img src="https://drive.google.com/uc?export=view&id=1osoqsqiHxeMbRAz2E8kOJ0DvWmcGS-GO"
-     alt="Logo SMP Negeri 3 Sindang"
-     class="logo">
+
+    <!-- LOGO FIXED -->
+    <img src="https://i.ibb.co/WNSc2wtP/LOGO-SMPN-3-SINDANG.png"
+         alt="Logo SMP Negeri 3 Sindang"
+         class="logo">
+
     <input type="text" id="nama" placeholder="Nama lengkap">
     <button id="btnHadir" class="disabled" onclick="absen()" disabled>Hadir</button>
     <p id="status" class="red">Anda berada diluar Jangkauan</p>
@@ -120,21 +125,23 @@
       const lng = pos.coords.longitude;
       const jarak = getDistanceFromLatLonInKm(lat, lng, sekolahLat, sekolahLng);
 
+      const status = document.getElementById("status");
+      const btn = document.getElementById("btnHadir");
+
       if (jarak <= maxDistance) {
-        document.getElementById("status").innerText = "Absen Online";
-        document.getElementById("status").className = "white";
-        const btn = document.getElementById("btnHadir");
+        status.innerText = "Absen Online";
+        status.className = "white";
         btn.disabled = false;
         btn.className = "enabled";
       } else {
-        document.getElementById("status").innerText = "Anda berada diluar Jangkauan";
-        document.getElementById("status").className = "red";
-        const btn = document.getElementById("btnHadir");
+        status.innerText = "Anda berada diluar Jangkauan";
+        status.className = "red";
         btn.disabled = true;
         btn.className = "disabled";
       }
     }, function(err) {
-      document.getElementById("status").innerText = "Gagal mendapatkan lokasi: " + err.message;
+      document.getElementById("status").innerText =
+        "Gagal mendapatkan lokasi: " + err.message;
       document.getElementById("status").className = "red";
     });
 
@@ -149,9 +156,9 @@
 
       fetch(scriptURL, {
         method: 'POST',
-        body: new URLSearchParams({ "nama": nama, "status": "Hadir" })
+        body: new URLSearchParams({ nama: nama, status: "Hadir" })
       })
-      .then(response => {
+      .then(() => {
         document.getElementById("status").innerText = "Absen berhasil dikirim.";
         document.getElementById("status").className = "white";
       })
@@ -161,5 +168,6 @@
       });
     }
   </script>
+
 </body>
 </html>
