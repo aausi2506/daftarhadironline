@@ -1,35 +1,44 @@
-<script>
-const sekolahLat = -6.328985;
-const sekolahLng = 108.321355;
-const maxDistance = 0.1;
-
-// URL DEPLOY TERBARU (FIX)
-const scriptURL =
-"https://script.google.com/macros/s/AKfycby2gFp6y_vgFWLYreiXM8cp2bad7zpwViFERPocinyjysxrcQUuhleIyb4uI3icErA/exec";
-
-function absen() {
-  const nama = document.getElementById("nama").value.trim();
-  if (!nama) {
-    alert("Nama harus diisi");
-    return;
-  }
-
-  fetch(scriptURL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: "nama=" + encodeURIComponent(nama) + "&status=Hadir"
-  })
-  .then(r => r.text())
-  .then(() => {
-    document.getElementById("status").innerText = "Absen berhasil dikirim";
-    document.getElementById("status").className = "white";
-    document.getElementById("btnHadir").disabled = true;
-  })
-  .catch(() => {
-    document.getElementById("status").innerText = "Gagal mengirim absen";
-    document.getElementById("status").className = "red";
-  });
+function doGet() {
+  return ContentService.createTextOutput("Web App Aktif");
 }
-</script>
+
+function doPost(e) {
+  try {
+    // ===== KONFIGURASI =====
+    const SPREADSHEET_ID = "ISI_ID_SPREADSHEET_ANDA";
+    const SHEET_NAME = "Sheet1";
+
+    const JAM_MULAI = "06:30";
+    const JAM_SELESAI = "07:15";
+    const ZONA = "Asia/Jakarta";
+
+    // ===== CEK JAM SERVER (WIB) =====
+    const now = new Date();
+    const jamWIB = Utilities.formatDate(now, ZONA, "HH:mm");
+
+    if (jamWIB < JAM_MULAI || jamWIB > JAM_SELESAI) {
+      return ContentService
+        .createTextOutput("DITOLAK: Di luar jam absen")
+        .setMimeType(ContentService.MimeType.TEXT);
+    }
+
+    // ===== SIMPAN DATA =====
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = ss.getSheetByName(SHEET_NAME);
+
+    const nama   = e.parameters.nama ? e.parameters.nama[0] : "";
+    const status = e.parameters.status ? e.parameters.status[0] : "";
+    const waktu  = Utilities.formatDate(now, ZONA, "yyyy-MM-dd HH:mm:ss");
+
+    sheet.appendRow([nama, status, waktu]);
+
+    return ContentService
+      .createTextOutput("OK")
+      .setMimeType(ContentService.MimeType.TEXT);
+
+  } catch (err) {
+    return ContentService
+      .createTextOutput("ERROR: " + err.message)
+      .setMimeType(ContentService.MimeType.TEXT);
+  }
+}
