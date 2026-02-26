@@ -2,177 +2,228 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Absen Online SMP Negeri 3 Sindang</title>
+<title>Absen Kehadiran</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body{
   margin:0;
-  font-family:Segoe UI,Arial,sans-serif;
-  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-  min-height:100vh;
+  font-family:Arial, Helvetica, sans-serif;
+  background:#00a2e8;
+  height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
-  color:#fff;
 }
-.card{
-  background:#1b263b;
-  width:360px;
-  padding:25px;
-  border-radius:14px;
-  box-shadow:0 10px 25px rgba(0,0,0,.4);
+.container{
+  width:340px;
+  padding:30px 20px;
   text-align:center;
 }
-.logo{
-  width:90px;
-  margin-bottom:10px;
+h1{
+  margin:0;
+  font-size:24px;
+  color:white;
+  letter-spacing:1px;
 }
-select,button{
+h2{
+  margin:6px 0 30px;
+  font-size:16px;
+  color:white;
+  font-weight:normal;
+}
+
+/* DROPDOWN */
+.select-wrapper{
+  position:relative;
+  margin-bottom:18px;
+}
+select{
   width:100%;
-  padding:12px;
-  margin-top:12px;
-  border-radius:8px;
-  font-size:15px;
+  padding:14px 50px 14px 16px;
+  background:#1d2c8b;
+  color:white;
+  font-size:16px;
+  border-radius:12px;
   border:none;
+  appearance:none;
 }
+.select-wrapper::after{
+  content:"▼";
+  position:absolute;
+  top:0;
+  right:0;
+  width:46px;
+  height:100%;
+  background:white;
+  color:black;
+  font-size:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:0 12px 12px 0;
+  pointer-events:none;
+}
+
+/* BUTTON */
 button{
-  background:#00b4d8;
-  color:#fff;
-  font-weight:600;
+  width:100%;
+  padding:14px;
+  background:#1d2c8b;
+  color:white;
+  font-size:18px;
+  border:none;
+  border-radius:12px;
+  margin-bottom:12px;
 }
-button:disabled, select:disabled{
-  background:#555;
-  color:#ccc;
+button:disabled,
+select:disabled{
+  opacity:0.6;
 }
+
+/* STATUS */
 #status{
-  margin-top:15px;
+  font-size:14px;
   font-weight:bold;
 }
-.ok{color:#fff;}
-.err{color:#ff4d4d;}
-.lock{color:#ffb703;}
+.status-error{ color:red; }
+.status-ok{ color:white; }
+
+/* NOTIF */
+#notif{
+  margin-top:10px;
+  color:white;
+  font-size:14px;
+  display:none;
+}
 </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="container">
 
-  <!-- LOGO SEKOLAH -->
-  <img class="logo"
-       src="https://live.staticflickr.com/65535/55117010556_5b4b6a4b2c_w.jpg"
-       alt="Logo SMP Negeri 3 Sindang"
-       onerror="this.style.display='none'">
+  <h1>ABSEN KEHADIRAN</h1>
+  <h2>SMP Negeri 3 Sindang</h2>
 
-  <h2>Absen Online</h2>
+  <div class="select-wrapper">
+    <select id="nama" disabled>
+      <option value="">pilih nama</option>
+      <option>AINUN ASISAH</option>
+      <option>ALIYAH NURHIDAYANTI</option>
+      <option>CAHAYA AULIA</option>
+      <option>CARWENDI</option>
+      <option>DAYANTI</option>
+      <option>DESIKA AMELIYA KOLISO</option>
+      <option>FAISAL MUHAMAD RIZKI</option>
+      <option>FIKA CALSIA</option>
+      <option>HAFID RIZQULLAH MAULIDIN</option>
+      <option>IKHSAN SUTONO</option>
+      <option>KAFADHIL TRI ARDHANI</option>
+      <option>KAILA NUR SAFITRI</option>
+      <option>KHANSA PUTRI CANTIKA</option>
+      <option>MESSI CAHYANINGRUM</option>
+      <option>MEY NURFALITA</option>
+      <option>MOHAMMAD LUQMANUL HAKIM</option>
+      <option>MUHAMAD YUSUF</option>
+      <option>MUHAMMAD MAFTU RIDHO</option>
+      <option>NAZRIL IRWANTO</option>
+      <option>RANGGA NAUFFAL IMZAALI</option>
+      <option>REGINA ZAHIRA</option>
+      <option>RIZQON ABDUL TAMRIN</option>
+      <option>SEKAR WANGI</option>
+      <option>SLAMET PRASETYO</option>
+      <option>TAMAM IHWAN</option>
+      <option>TIAS NELIN</option>
+      <option>TIRANI</option>
+      <option>WARNATA</option>
+      <option>WILLIAM ABIE HERMAN</option>
+      <option>WINARTI JAYANTI</option>
+    </select>
+  </div>
 
-  <select id="nama" disabled>
-    <option value="">-- Pilih Nama --</option>
-    <option>AINUN ASISAH</option>
-    <option>ALIYAH NURHIDAYANTI</option>
-    <option>CAHAYA AULIA</option>
-    <option>CARWENDI</option>
-    <option>DAYANTI</option>
-    <option>DESIKA AMELIYA KOLISO</option>
-    <option>FAISAL MUHAMAD RIZKI</option>
-    <option>FIKA CALSIA</option>
-    <option>HAFID RIZQULLAH MAULIDIN</option>
-    <option>IKHSAN SUTONO</option>
-    <option>KAFADHIL TRI ARDHANI</option>
-    <option>KAILA NUR SAFITRI</option>
-    <option>KHANSA PUTRI CANTIKA</option>
-    <option>MESSI CAHYANINGRUM</option>
-    <option>MEY NURFALITA</option>
-    <option>MOHAMMAD LUQMANUL HAKIM</option>
-    <option>MUHAMAD YUSUF</option>
-    <option>MUHAMMAD MAFTU RIDHO</option>
-    <option>NAZRIL IRWANTO</option>
-    <option>RANGGA NAUFFAL IMZAALI</option>
-    < <option>REGINA ZAHIRA</option>
-    <option>RIZQON ABDUL TAMRIN</option>
-    <option>SEKAR WANGI</option>
-    <option>SLAMET PRASETYO</option>
-    <option>TAMAM IHWAN</option>
-    <option>TIAS NELIN</option>
-    <option>TIRANI</option>
-    <option>WARNATA</option>
-    <option>WILLIAM ABIE HERMAN</option>
-    <option>WINARTI JAYANTI</option>
-  </select>
+  <button id="btnHadir" onclick="kirimAbsen()" disabled>hadir</button>
 
-  <button id="btnHadir" onclick="kirimAbsen()" disabled>Hadir</button>
+  <div id="status" class="status-error">anda berada di luar jangkauan</div>
+  <div id="notif">Absen terkirim</div>
 
-  <div id="status" class="err">Mengambil lokasi...</div>
 </div>
 
 <script>
-/* === KONFIGURASI === */
+/* ===== KONFIGURASI ===== */
 const SCHOOL_LAT = -6.328985;
 const SCHOOL_LNG = 108.321355;
-const RADIUS = 100; // meter
+const RADIUS = 100;
 
-// 🔗 URL WEB APP ANDA
 const WEB_APP_URL =
-"https://script.google.com/macros/s/AKfycbw4KLX04ohAop7avsn3x4dB0S56MipHvpIgX7i7ZaeW8CTqjXrxIYbc0IywiI3CpMAa/exec";
+"https://script.google.com/macros/s/AKfycbwf8cOoAlzddOPXrnAhEWMCUZu_zXLBtZYGMxTT6P62B8HKH-Zw7nsf8x6CkieO2xzX/exec";
 
-/* === FUNGSI === */
-function jarak(lat1,lon1,lat2,lon2){
+const LOCK_KEY = "absen_locked";
+
+/* ===== LOCK SAAT HALAMAN DIBUKA ===== */
+window.onload = () => {
+  if (localStorage.getItem(LOCK_KEY) === "true") {
+    kunciAplikasi();
+  }
+};
+
+/* ===== FUNGSI ===== */
+function distance(lat1,lon1,lat2,lon2){
   const R=6371e3;
-  const a=
-    Math.sin((lat2-lat1)*Math.PI/360)**2+
+  const a=Math.sin((lat2-lat1)*Math.PI/360)**2+
     Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
     Math.sin((lon2-lon1)*Math.PI/360)**2;
   return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 
-function jamValid(){
-  const n=new Date();
-  const j=n.getHours()+n.getMinutes()/60;
-  return j>=6 && j<=7.25;
+function kunciAplikasi(){
+  document.getElementById("nama").disabled=true;
+  document.getElementById("btnHadir").disabled=true;
+  document.getElementById("status").textContent="LOCKED";
+  document.getElementById("status").className="status-ok";
 }
 
-function setStatus(text,cls){
-  const s=document.getElementById("status");
-  s.textContent=text;
-  s.className=cls;
-}
-
-function aktif(v){
-  document.getElementById("nama").disabled=!v;
-  document.getElementById("btnHadir").disabled=!v;
-}
-
-/* === CEK LOKASI & JAM === */
+/* ===== CEK LOKASI ===== */
 navigator.geolocation.getCurrentPosition(p=>{
-  const d=jarak(p.coords.latitude,p.coords.longitude,SCHOOL_LAT,SCHOOL_LNG);
+  if (localStorage.getItem(LOCK_KEY)==="true") return;
 
-  if(d>RADIUS){
-    setStatus("anda di luar jangkauan","err");
-    return;
+  const d=distance(
+    p.coords.latitude,
+    p.coords.longitude,
+    SCHOOL_LAT,
+    SCHOOL_LNG
+  );
+
+  if(d<=RADIUS){
+    document.getElementById("status").textContent="Absen Online";
+    document.getElementById("status").className="status-ok";
+    document.getElementById("nama").disabled=false;
+    document.getElementById("btnHadir").disabled=false;
   }
-  if(!jamValid()){
-    setStatus("attendance locked","lock");
-    return;
-  }
-  setStatus("Absen Online","ok");
-  aktif(true);
 });
 
-/* === KIRIM ABSEN === */
+/* ===== KIRIM ABSEN ===== */
 function kirimAbsen(){
   const nama=document.getElementById("nama").value;
-  if(!nama){alert("Silakan pilih nama terlebih dahulu");return;}
+  if(!nama){ alert("pilih nama"); return; }
 
   fetch(WEB_APP_URL,{
     method:"POST",
     body:JSON.stringify({nama:nama})
   })
-  .then(()=> {
-    alert("Absen berhasil");
-    aktif(false);
-  })
-  .catch(()=>alert("Gagal mengirim absen"));
+  .then(r=>r.json())
+  .then(res=>{
+    if(res.status==="locked"){
+      alert("Anda sudah absen hari ini");
+      kunciAplikasi();
+      return;
+    }
+    if(res.status==="success"){
+      localStorage.setItem(LOCK_KEY,"true");
+      document.getElementById("notif").style.display="block";
+      kunciAplikasi();
+    }
+  });
 }
 </script>
 
