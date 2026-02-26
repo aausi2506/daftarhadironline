@@ -3,21 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <title>Absen Online SMP Negeri 3 Sindang</title>
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body{
   margin:0;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  font-family:Segoe UI,Arial,sans-serif;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
   min-height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
   color:#fff;
 }
-
 .card{
   background:#1b263b;
   width:360px;
@@ -26,49 +24,34 @@ body{
   box-shadow:0 10px 25px rgba(0,0,0,.4);
   text-align:center;
 }
-
 .logo{
   width:90px;
   margin-bottom:10px;
 }
-
-h2{
-  margin:10px 0 20px;
-  font-weight:600;
-}
-
 select,button{
   width:100%;
   padding:12px;
   margin-top:12px;
   border-radius:8px;
   font-size:15px;
-}
-
-select{
   border:none;
 }
-
 button{
-  border:none;
   background:#00b4d8;
   color:#fff;
   font-weight:600;
 }
-
 button:disabled, select:disabled{
   background:#555;
   color:#ccc;
 }
-
 #status{
   margin-top:15px;
   font-weight:bold;
 }
-
-.status-ok{ color:#ffffff; }
-.status-error{ color:#ff4d4d; }
-.status-lock{ color:#ffb703; }
+.ok{color:#fff;}
+.err{color:#ff4d4d;}
+.lock{color:#ffb703;}
 </style>
 </head>
 
@@ -106,7 +89,7 @@ button:disabled, select:disabled{
     <option>MUHAMMAD MAFTU RIDHO</option>
     <option>NAZRIL IRWANTO</option>
     <option>RANGGA NAUFFAL IMZAALI</option>
-    <option>REGINA ZAHIRA</option>
+    < <option>REGINA ZAHIRA</option>
     <option>RIZQON ABDUL TAMRIN</option>
     <option>SEKAR WANGI</option>
     <option>SLAMET PRASETYO</option>
@@ -120,15 +103,20 @@ button:disabled, select:disabled{
 
   <button id="btnHadir" onclick="kirimAbsen()" disabled>Hadir</button>
 
-  <div id="status" class="status-error">Mengambil lokasi...</div>
+  <div id="status" class="err">Mengambil lokasi...</div>
 </div>
 
 <script>
+/* === KONFIGURASI === */
 const SCHOOL_LAT = -6.328985;
 const SCHOOL_LNG = 108.321355;
-const RADIUS = 100;
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyeGf7CCwfJRZEJpt3ndHFO8mX01LjZHw-kTeGoP0BYkL3iB-1fE4ovCOagGPv_zYVe/exec";
+const RADIUS = 100; // meter
 
+// 🔗 URL WEB APP ANDA
+const WEB_APP_URL =
+"https://script.google.com/macros/s/AKfycbw4KLX04ohAop7avsn3x4dB0S56MipHvpIgX7i7ZaeW8CTqjXrxIYbc0IywiI3CpMAa/exec";
+
+/* === FUNGSI === */
 function jarak(lat1,lon1,lat2,lon2){
   const R=6371e3;
   const a=
@@ -144,47 +132,47 @@ function jamValid(){
   return j>=6 && j<=7.25;
 }
 
-navigator.geolocation.getCurrentPosition(p=>{
-  const d=jarak(p.coords.latitude,p.coords.longitude,SCHOOL_LAT,SCHOOL_LNG);
+function setStatus(text,cls){
+  const s=document.getElementById("status");
+  s.textContent=text;
+  s.className=cls;
+}
 
-  if(d>RADIUS){
-    statusMsg("anda di luar jangkauan","error");
-    return;
-  }
-  if(!jamValid()){
-    statusMsg("attendance locked","lock");
-    return;
-  }
-  statusMsg("Absen Online","ok");
-  aktifkan(true);
-});
-
-function aktifkan(v){
+function aktif(v){
   document.getElementById("nama").disabled=!v;
   document.getElementById("btnHadir").disabled=!v;
 }
 
-function statusMsg(t,mode){
-  const s=document.getElementById("status");
-  s.textContent=t;
-  s.className={
-    ok:"status-ok",
-    error:"status-error",
-    lock:"status-lock"
-  }[mode];
-}
+/* === CEK LOKASI & JAM === */
+navigator.geolocation.getCurrentPosition(p=>{
+  const d=jarak(p.coords.latitude,p.coords.longitude,SCHOOL_LAT,SCHOOL_LNG);
 
+  if(d>RADIUS){
+    setStatus("anda di luar jangkauan","err");
+    return;
+  }
+  if(!jamValid()){
+    setStatus("attendance locked","lock");
+    return;
+  }
+  setStatus("Absen Online","ok");
+  aktif(true);
+});
+
+/* === KIRIM ABSEN === */
 function kirimAbsen(){
   const nama=document.getElementById("nama").value;
-  if(!nama){alert("Silakan pilih nama");return;}
+  if(!nama){alert("Silakan pilih nama terlebih dahulu");return;}
 
   fetch(WEB_APP_URL,{
     method:"POST",
     body:JSON.stringify({nama:nama})
-  }).then(()=>{
+  })
+  .then(()=> {
     alert("Absen berhasil");
-    aktifkan(false);
-  });
+    aktif(false);
+  })
+  .catch(()=>alert("Gagal mengirim absen"));
 }
 </script>
 
