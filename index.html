@@ -33,21 +33,43 @@ h2{
   font-weight:normal;
 }
 
-/* DROPDOWN */
+/* ===== DROPDOWN ===== */
 .select-wrapper{
   position:relative;
   margin-bottom:18px;
+  transition:transform .25s ease;
 }
+.select-wrapper.active{
+  transform:scale(1.03);
+}
+
 select{
   width:100%;
   padding:14px 50px 14px 16px;
   background:#1d2c8b;
-  color:white;
+  color:#ccc;                 /* placeholder abu-abu */
   font-size:16px;
   border-radius:12px;
   border:none;
   appearance:none;
+
+  text-align:center;
+  text-align-last:center;
+
+  transition:all .25s ease;
 }
+
+select:focus{
+  outline:none;
+  background:#16257a;
+}
+
+/* setelah pilih nama */
+select.selected{
+  color:white;                /* nama putih */
+  font-weight:bold;           /* nama tebal */
+}
+
 .select-wrapper::after{
   content:"▼";
   position:absolute;
@@ -65,7 +87,7 @@ select{
   pointer-events:none;
 }
 
-/* BUTTON */
+/* ===== BUTTON ===== */
 button{
   width:100%;
   padding:14px;
@@ -81,7 +103,7 @@ select:disabled{
   opacity:0.6;
 }
 
-/* STATUS */
+/* ===== STATUS ===== */
 #status{
   font-size:14px;
   font-weight:bold;
@@ -89,7 +111,7 @@ select:disabled{
 .status-error{ color:red; }
 .status-ok{ color:white; }
 
-/* NOTIF */
+/* ===== NOTIF ===== */
 #notif{
   margin-top:10px;
   color:white;
@@ -150,6 +172,19 @@ select:disabled{
 </div>
 
 <script>
+/* ===== ANIMASI DROPDOWN ===== */
+const selectNama = document.getElementById("nama");
+const wrapper = document.querySelector(".select-wrapper");
+
+selectNama.addEventListener("focus",()=>wrapper.classList.add("active"));
+selectNama.addEventListener("blur",()=>wrapper.classList.remove("active"));
+
+selectNama.addEventListener("change",()=>{
+  if(selectNama.value!==""){
+    selectNama.classList.add("selected");
+  }
+});
+
 /* ===== KONFIGURASI ===== */
 const SCHOOL_LAT = -6.328985;
 const SCHOOL_LNG = 108.321355;
@@ -160,14 +195,11 @@ const WEB_APP_URL =
 
 const LOCK_KEY = "absen_locked";
 
-/* ===== LOCK SAAT HALAMAN DIBUKA ===== */
-window.onload = () => {
-  if (localStorage.getItem(LOCK_KEY) === "true") {
-    kunciAplikasi();
-  }
+/* ===== LOCK ===== */
+window.onload=()=>{
+  if(localStorage.getItem(LOCK_KEY)==="true") kunciAplikasi();
 };
 
-/* ===== FUNGSI ===== */
 function distance(lat1,lon1,lat2,lon2){
   const R=6371e3;
   const a=Math.sin((lat2-lat1)*Math.PI/360)**2+
@@ -177,7 +209,7 @@ function distance(lat1,lon1,lat2,lon2){
 }
 
 function kunciAplikasi(){
-  document.getElementById("nama").disabled=true;
+  selectNama.disabled=true;
   document.getElementById("btnHadir").disabled=true;
   document.getElementById("status").textContent="LOCKED";
   document.getElementById("status").className="status-ok";
@@ -185,7 +217,7 @@ function kunciAplikasi(){
 
 /* ===== CEK LOKASI ===== */
 navigator.geolocation.getCurrentPosition(p=>{
-  if (localStorage.getItem(LOCK_KEY)==="true") return;
+  if(localStorage.getItem(LOCK_KEY)==="true") return;
 
   const d=distance(
     p.coords.latitude,
@@ -197,14 +229,14 @@ navigator.geolocation.getCurrentPosition(p=>{
   if(d<=RADIUS){
     document.getElementById("status").textContent="Absen Online";
     document.getElementById("status").className="status-ok";
-    document.getElementById("nama").disabled=false;
+    selectNama.disabled=false;
     document.getElementById("btnHadir").disabled=false;
   }
 });
 
 /* ===== KIRIM ABSEN ===== */
 function kirimAbsen(){
-  const nama=document.getElementById("nama").value;
+  const nama=selectNama.value;
   if(!nama){ alert("pilih nama"); return; }
 
   fetch(WEB_APP_URL,{
@@ -213,11 +245,6 @@ function kirimAbsen(){
   })
   .then(r=>r.json())
   .then(res=>{
-    if(res.status==="locked"){
-      alert("Anda sudah absen hari ini");
-      kunciAplikasi();
-      return;
-    }
     if(res.status==="success"){
       localStorage.setItem(LOCK_KEY,"true");
       document.getElementById("notif").style.display="block";
