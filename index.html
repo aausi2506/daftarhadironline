@@ -1,17 +1,17 @@
-<div class="app-container" style="background: linear-gradient(#0047AB, #00BFFF); height: 100vh;">
-  <header>
-    <img src="LOGO_SMPN_3_SINDANG.jpg" width="100">
-    <h1>Absen Kehadiran Siswa</h1>
-    <h2>SMP Negeri 3 Sindang</h2>
-  </header>
+function doPost(e) {
+  const data = JSON.parse(e.postData.contents);
 
-  <div class="form-card">
-    <select name="siswa">
-      <option>Pilih Nama Siswa...</option>
-      </select>
-    
-    <button class="btn-hadir">HADIR</button>
-    
-    <p class="status">Absen Online</p> 
-    </div>
-</div>
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("Sheet1");
+
+  sheet.appendRow([
+    new Date(),
+    data.nama,
+    "Hadir",
+    "SMP Negeri 3 Sindang"
+  ]);
+
+  return ContentService
+    .createTextOutput(JSON.stringify({status: "success"}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
